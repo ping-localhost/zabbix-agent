@@ -23,11 +23,11 @@ curl -sL https://raw.githubusercontent.com/ping-localhost/zabbix-agent/master/in
 After installation, the Zabbix agent will be running and configured to start on boot. You can check the status of the Zabbix agent service with:
 
 ```sh
-systemctl status zabbix-agent
+systemctl status zabbix-agent2
 ```
 
 Or, for Alpine:
 
 ```sh
-systemctl status zabbix-agent
+systemctl status zabbix-agent2
 ```
