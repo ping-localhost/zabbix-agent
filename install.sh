@@ -44,6 +44,7 @@ case "$DISTRO_CODENAME" in
         dpkg -i "$(basename "$ZABBIX_URL")"
         apt update && apt -y install zabbix-agent2
         gpasswd -a zabbix docker
+        rm "$(basename "$ZABBIX_URL")"
         ;;
     alpine)
         apk update && apk add zabbix-agent2 zabbix-agent2-openrc
@@ -59,6 +60,10 @@ esac
 mkdir -p /etc/zabbix/zabbix_agent2.d
 curl -o /tmp/zabbix_agent2.conf "https://raw.githubusercontent.com/ping-localhost/zabbix-agent/master/zabbix_agent2.conf"
 sed -i "s/HOSTNAME-REPLACE-ME/$(hostname)/g" /tmp/zabbix_agent2.conf
+
+# Ensure run folder exists
+mkdir -p /var/run/zabbix/
+chown zabbix:zabbix /var/run/zabbix/
 
 # Backup and move the Zabbix agent configuration file
 if [ -f /etc/zabbix/zabbix_agent2.conf ]; then
