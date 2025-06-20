@@ -7,10 +7,10 @@ if (( BASH_VERSINFO[0] < 4 )); then
 fi
 
 declare -A zabbix_releases=(
-    ["jammy"]="https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-2+ubuntu22.04_all.deb"
-    ["noble"]="https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-2+ubuntu24.04_all.deb"
-    ["bullseye"]="https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_7.0-2+debian11_all.deb"
-    ["bookworm"]="https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_7.0-2+debian12_all.deb"
+    ["jammy"]="https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.4-0.2+ubuntu22.04_all.deb"
+    ["noble"]="https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.4-0.2+ubuntu24.04_all.deb"
+    ["bullseye"]="https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_7.4-0.2+debian11_all.deb"
+    ["bookworm"]="https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_7.4-0.2+debian12_all.deb"
 )
 
 # Detect OS and version
