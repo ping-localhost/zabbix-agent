@@ -15,7 +15,7 @@ Before running this script, ensure that your system is one of the supported Ubun
 ## One-liner
 
 ```sh
-curl -sL https://raw.githubusercontent.com/ping-localhost/zabbix-agent/master/install.sh | bash
+curl --no-alpn -sL "https://raw.githubusercontent.com/ping-localhost/zabbix-agent/master/install.sh?time=$(date +%s)" | bash
 ```
 
 ## Post-installation
