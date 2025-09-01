@@ -7,10 +7,11 @@ if (( BASH_VERSINFO[0] < 4 )); then
 fi
 
 declare -A zabbix_releases=(
-    ["jammy"]="https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.4-0.2+ubuntu22.04_all.deb"
-    ["noble"]="https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.4-0.2+ubuntu24.04_all.deb"
-    ["bullseye"]="https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_7.4-0.2+debian11_all.deb"
-    ["bookworm"]="https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_7.4-0.2+debian12_all.deb"
+    ["jammy"]="https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.4-1+ubuntu22.04_all.deb"
+    ["noble"]="https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.4-1+ubuntu24.04_all.deb"
+    ["bullseye"]="https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_7.4-1+debian11_all.deb"
+    ["bookworm"]="https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_7.4-1+debian12_all.deb"
+    ["trixie"]="https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_7.4-1+debian13_all.deb"
 )
 
 # Detect OS and version
@@ -31,6 +32,7 @@ if [ -z "$DISTRO_CODENAME" ]; then
         ubuntu:24.04) DISTRO_CODENAME="noble" ;;
         debian:11) DISTRO_CODENAME="bullseye" ;;
         debian:12) DISTRO_CODENAME="bookworm" ;;
+        debian:13) DISTRO_CODENAME="trixie" ;;
         alpine:*) DISTRO_CODENAME="alpine" ;;
         *) echo "Unsupported $OS version $VERSION"; exit 1 ;;
     esac
@@ -38,7 +40,7 @@ fi
 
 # Install Zabbix agent2
 case "$DISTRO_CODENAME" in
-    jammy|noble|bullseye|bookworm)
+    jammy|noble|bullseye|bookworm|trixie)
         ZABBIX_URL=${zabbix_releases[$DISTRO_CODENAME]}
         curl -O "$ZABBIX_URL"
         dpkg -i "$(basename "$ZABBIX_URL")"
@@ -73,7 +75,7 @@ mv /tmp/zabbix_agent2.conf /etc/zabbix/zabbix_agent2.conf
 
 # Enable and restart Zabbix agent service
 case "$DISTRO_CODENAME" in
-    jammy|noble|bullseye|bookworm)
+    jammy|noble|bullseye|bookworm|trixie)
         systemctl daemon-reload
         systemctl enable zabbix-agent2
         if systemctl restart zabbix-agent2; then

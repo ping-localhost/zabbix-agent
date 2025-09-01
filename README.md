@@ -10,12 +10,13 @@ Before running this script, ensure that your system is one of the supported Ubun
 - Ubuntu 24.04 (Lunar)
 - Debian 11 (Bullseye)
 - Debian 12 (Bookworm)
+- Debian 13 (Trixie)
 - Alpine (any, if it exists)
 
 ## One-liner
 
 ```sh
-curl --no-alpn -sL "https://raw.githubusercontent.com/ping-localhost/zabbix-agent/master/install.sh?time=$(date +%s)" | bash
+curl --no-alpn -sL "https://raw.githubusercontent.com/ping-localhost/zabbix-agent/refs/heads/master/install.sh" | bash
 ```
 
 ## Post-installation
