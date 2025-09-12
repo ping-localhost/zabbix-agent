@@ -13,6 +13,8 @@ Before running this script, ensure that your system is one of the supported Ubun
 - Debian 13 (Trixie)
 - Alpine (any, if it exists)
 
+> **WARNING**: Server is hardcoded in the configuration file. If you want to use this for yourself, please fork the repo.
+
 ## One-liner
 
 ```sh
