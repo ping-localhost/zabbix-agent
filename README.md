@@ -2,6 +2,8 @@
 
 This script automates the installation and configuration of the Zabbix agent on Ubuntu, Debian, and Alpine systems. It checks the system's distribution and version, downloads the appropriate Zabbix agent package, installs it, and configures the system with the provided agent config.
 
+> **WARNING**: Server is hardcoded in the configuration file. If you want to use this for yourself, please fork the repo.
+
 ## Prerequisites
 
 Before running this script, ensure that your system is one of the supported Ubuntu, Debian, or Alpine releases:
@@ -12,8 +14,6 @@ Before running this script, ensure that your system is one of the supported Ubun
 - Debian 12 (Bookworm)
 - Debian 13 (Trixie)
 - Alpine (any, if it exists)
-
-> **WARNING**: Server is hardcoded in the configuration file. If you want to use this for yourself, please fork the repo.
 
 ## One-liner
 
