@@ -1,4 +1,4 @@
-# Zabbix Agent Installation Script
+# Zabbix Agent 2 Installation Script
 
 This script automates the installation and configuration of the Zabbix agent on Ubuntu, Debian, and Alpine systems. It checks the system's distribution and version, downloads the appropriate Zabbix agent package, installs it, and configures the system with the provided agent config.
 
@@ -14,6 +14,10 @@ Before running this script, ensure that your system is one of the supported Ubun
 - Debian 12 (Bookworm)
 - Debian 13 (Trixie)
 - Alpine (any, if it exists)
+
+## Version
+
+Current installing the latest 8.0 version.
 
 ## One-liner
 
