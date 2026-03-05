@@ -1,12 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# Ensure the script is running with Bash version 4 or higher
-if (( BASH_VERSINFO[0] < 4 )); then
-    echo "This script requires Bash version 4 or higher. Please upgrade your Bash."
-    exit 1
-fi
-
 # Ensure running as root
 if [[ $EUID -ne 0 ]]; then
     echo "Error: This script must be run as root (or via sudo)."
@@ -23,18 +17,21 @@ warn() { echo "[WARN]  $*" >&2; }
 die()  { echo "[ERROR] $*" >&2; exit 1; }
 
 # Cleanup temp files on exit
-TMPDIR=$(mktemp -d)
-cleanup() { rm -rf "$TMPDIR"; }
+WORK_DIR=$(mktemp -d)
+cleanup() { rm -rf "$WORK_DIR"; }
 trap cleanup EXIT
 
-# Zabbix release URLs per distro codename
-declare -A zabbix_releases=(
-    ["jammy"]="https://repo.zabbix.com/zabbix/8.0/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_8.0+ubuntu22.04_all.deb"
-    ["noble"]="https://repo.zabbix.com/zabbix/8.0/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_8.0+ubuntu24.04_all.deb"
-    ["bullseye"]="https://repo.zabbix.com/zabbix/8.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_8.0+debian11_all.deb"
-    ["bookworm"]="https://repo.zabbix.com/zabbix/8.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_8.0+debian12_all.deb"
-    ["trixie"]="https://repo.zabbix.com/zabbix/8.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_8.0+debian13_all.deb"
-)
+# Zabbix release URL lookup
+get_zabbix_url() {
+    case "$1" in
+        jammy)    echo "https://repo.zabbix.com/zabbix/8.0/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_8.0+ubuntu22.04_all.deb" ;;
+        noble)    echo "https://repo.zabbix.com/zabbix/8.0/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_8.0+ubuntu24.04_all.deb" ;;
+        bullseye) echo "https://repo.zabbix.com/zabbix/8.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_8.0+debian11_all.deb" ;;
+        bookworm) echo "https://repo.zabbix.com/zabbix/8.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_8.0+debian12_all.deb" ;;
+        trixie)   echo "https://repo.zabbix.com/zabbix/8.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_8.0+debian13_all.deb" ;;
+        *)        die "No Zabbix release URL for codename: $1" ;;
+    esac
+}
 
 # Detect OS and version
 if [[ -f /etc/os-release ]]; then
@@ -63,7 +60,9 @@ log "Detected: $OS ($DISTRO_CODENAME)"
 
 # Install Zabbix agent2
 case "$DISTRO_CODENAME" in
-        DEB_FILE="$TMPDIR/$(basename "$ZABBIX_URL")"
+    jammy|noble|bullseye|bookworm|trixie)
+        ZABBIX_URL=$(get_zabbix_url "$DISTRO_CODENAME")
+        DEB_FILE="$WORK_DIR/$(basename "$ZABBIX_URL")"
 
         log "Downloading Zabbix release package…"
         curl -fsSL -o "$DEB_FILE" "$ZABBIX_URL" || die "Failed to download $ZABBIX_URL"
@@ -101,7 +100,7 @@ esac
 
 # Configure Zabbix agent
 CONF_URL="https://raw.githubusercontent.com/ping-localhost/zabbix-agent/master/zabbix_agent2.conf"
-CONF_TMP="$TMPDIR/zabbix_agent2.conf"
+CONF_TMP="$WORK_DIR/zabbix_agent2.conf"
 CONF_DEST="/etc/zabbix/zabbix_agent2.conf"
 
 mkdir -p /etc/zabbix/zabbix_agent2.d
