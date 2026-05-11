@@ -27,6 +27,7 @@ main() {
         case "$1" in
             jammy)    echo "https://repo.zabbix.com/zabbix/8.0/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_8.0+ubuntu22.04_all.deb" ;;
             noble)    echo "https://repo.zabbix.com/zabbix/8.0/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_8.0+ubuntu24.04_all.deb" ;;
+            oracular) echo "https://repo.zabbix.com/zabbix/8.0/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_8.0+ubuntu26.04_all.deb" ;;
             bullseye) echo "https://repo.zabbix.com/zabbix/8.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_8.0+debian11_all.deb" ;;
             bookworm) echo "https://repo.zabbix.com/zabbix/8.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_8.0+debian12_all.deb" ;;
             trixie)   echo "https://repo.zabbix.com/zabbix/8.0/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_8.0+debian13_all.deb" ;;
@@ -49,6 +50,7 @@ main() {
         case "$OS:$VERSION" in
             ubuntu:22.04) DISTRO_CODENAME="jammy" ;;
             ubuntu:24.04) DISTRO_CODENAME="noble" ;;
+            ubuntu:26.04) DISTRO_CODENAME="oracular" ;;
             debian:11)    DISTRO_CODENAME="bullseye" ;;
             debian:12)    DISTRO_CODENAME="bookworm" ;;
             debian:13)    DISTRO_CODENAME="trixie" ;;
@@ -61,7 +63,7 @@ main() {
 
     # Install Zabbix agent2
     case "$DISTRO_CODENAME" in
-        jammy|noble|bullseye|bookworm|trixie)
+        jammy|noble|oracular|bullseye|bookworm|trixie)
             ZABBIX_URL=$(get_zabbix_url "$DISTRO_CODENAME")
             DEB_FILE="$WORK_DIR/$(basename "$ZABBIX_URL")"
 
@@ -110,9 +112,10 @@ main() {
     curl -fsSL -o "$CONF_TMP" "$CONF_URL" || die "Failed to download $CONF_URL"
     sed -i "s/HOSTNAME-REPLACE-ME/$(hostname)/g" "$CONF_TMP"
 
-    # Ensure run directory exists
-    mkdir -p /var/run/zabbix/
-    chown zabbix:zabbix /var/run/zabbix/
+    # Ensure required directories exist with correct permissions
+    mkdir -p /var/run/zabbix/ /var/log/zabbix/
+    chown zabbix:zabbix /var/run/zabbix/ /var/log/zabbix/
+    chmod 755 /var/log/zabbix/
 
     # Backup existing config before overwriting
     if [[ -f "$CONF_DEST" ]]; then
@@ -127,8 +130,9 @@ main() {
 
     # Enable and restart service
     log "Enabling and starting zabbix-agent2…"
+    
     case "$DISTRO_CODENAME" in
-        jammy|noble|bullseye|bookworm|trixie)
+        jammy|noble|oracular|bullseye|bookworm|trixie)
             systemctl daemon-reload
             systemctl enable zabbix-agent2
             if systemctl restart zabbix-agent2; then
@@ -142,7 +146,7 @@ main() {
             if rc-service zabbix-agent2 restart; then
                 rc-service zabbix-agent2 status
             else
-                die "zabbix-agent2 failed to start."
+                die "zabbix-agent2 failed to start. Check: rc-service zabbix-agent2 status"
             fi
             ;;
     esac

@@ -9,7 +9,8 @@ This script automates the installation and configuration of the Zabbix agent on 
 Before running this script, ensure that your system is one of the supported Ubuntu, Debian, or Alpine releases:
 
 - Ubuntu 22.04 (Jammy)
-- Ubuntu 24.04 (Lunar)
+- Ubuntu 24.04 (Noble)
+- Ubuntu 26.04 (Oracular)
 - Debian 11 (Bullseye)
 - Debian 12 (Bookworm)
 - Debian 13 (Trixie)
@@ -36,5 +37,5 @@ systemctl status zabbix-agent2
 Or, for Alpine:
 
 ```sh
-systemctl status zabbix-agent2
+rc-service zabbix-agent2 status
 ```
