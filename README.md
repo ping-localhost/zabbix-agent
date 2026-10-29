@@ -6,15 +6,16 @@ This script automates the installation and configuration of the Zabbix agent on 
 
 ## Prerequisites
 
-Before running this script, ensure that your system is one of the supported Ubuntu, Debian, or Alpine releases:
+Before running this script, ensure that your system is one of these supported releases:
 
+- Ubuntu 20.04 (Focal)
 - Ubuntu 22.04 (Jammy)
 - Ubuntu 24.04 (Noble)
-- Ubuntu 26.04 (Oracular)
+- Ubuntu 26.04 (Resolute)
 - Debian 11 (Bullseye)
 - Debian 12 (Bookworm)
 - Debian 13 (Trixie)
-- Alpine (any, if it exists)
+- Alpine 3.23 or 3.24 (with the `community` repository enabled)
 
 ## Version
 
@@ -23,7 +24,7 @@ Current installing the latest 8.0 version.
 ## One-liner
 
 ```sh
-curl --no-alpn -sL "https://raw.githubusercontent.com/ping-localhost/zabbix-agent/refs/heads/master/install.sh" | bash
+curl --no-alpn -sL "https://raw.githubusercontent.com/ping-localhost/zabbix-agent/refs/heads/master/install.sh" | sh
 ```
 
 ## Post-installation
