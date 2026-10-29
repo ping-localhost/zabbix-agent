@@ -54,8 +54,14 @@ main() {
             log "Downloading Zabbix release package…"
             curl -fsSL -o "$DEB_FILE" "$ZABBIX_URL" || die "Failed to download $ZABBIX_URL"
 
-            log "Installing Zabbix release package…"
-            dpkg -i "$DEB_FILE" || true  # may warn about missing deps, apt fixes below
+            RELEASE_VERSION=$(dpkg-deb -f "$DEB_FILE" Version)
+            INSTALLED_RELEASE_VERSION=$(dpkg-query -W -f='${Version}' zabbix-release 2>/dev/null || true)
+            if [ -n "$INSTALLED_RELEASE_VERSION" ] && dpkg --compare-versions "$INSTALLED_RELEASE_VERSION" ge "$RELEASE_VERSION"; then
+                log "Installed Zabbix release package is current or newer; skipping."
+            else
+                log "Installing Zabbix release package…"
+                dpkg -i "$DEB_FILE" || true  # apt fixes missing dependencies below
+            fi
 
             log "Installing zabbix-agent2…"
             apt-get -qq update
@@ -97,8 +103,8 @@ main() {
     sed -i "s/HOSTNAME-REPLACE-ME/$(hostname)/g" "$CONF_TMP"
 
     # Ensure required directories exist with correct permissions
-    mkdir -p /run/zabbix/ /var/log/zabbix/
-    chown zabbix:zabbix /run/zabbix/ /var/log/zabbix/
+    mkdir -p /var/log/zabbix/
+    chown zabbix:zabbix /var/log/zabbix/
     chmod 755 /var/log/zabbix/
 
     # Backup existing config before overwriting
@@ -117,9 +123,6 @@ main() {
 
     case "$PACKAGE_FAMILY" in
         debian)
-            printf '%s\n' 'd /run/zabbix 0755 zabbix zabbix -' > /etc/tmpfiles.d/zabbix-agent2.conf
-            systemd-tmpfiles --create /etc/tmpfiles.d/zabbix-agent2.conf
-
             systemctl enable zabbix-agent2
             if systemctl restart zabbix-agent2; then
                 systemctl --no-pager status zabbix-agent2
